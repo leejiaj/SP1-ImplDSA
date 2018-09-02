@@ -82,6 +82,8 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 			ready = false;  // Calling remove again without calling next will result in exception thrown
 			size--;
 		}
+		
+		
 	}  // end of class SLLIterator
 
 	// Add new elements to the end of the list
@@ -93,6 +95,45 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 		tail.next = ent;
 		tail = tail.next;
 		size++;
+	}
+	
+	protected void addFirst( T x) {
+		Entry<T> temp = head.next;
+		head.next = new Entry<>(x,temp);
+		size++;
+	}
+	
+	public void removeFirst() {
+		if(head.next == null) {
+			throw new NoSuchElementException();
+		}
+		if(head.next == tail){
+			tail = head;
+		}
+		Entry<T> temp = head.next.next;
+		head.next = temp;
+		size--;
+	}
+	
+	public void remove(T x) {
+		if(head.next == null) {
+			throw new NoSuchElementException();
+		}
+		Entry<T> temp = head.next;
+		Entry<T> previous = head;
+		while(temp!=null) {
+			if(temp.element == x) {
+				if(temp == tail) {
+					tail = previous;
+				}
+				previous.next = temp.next;
+				size--;
+				return;
+			}
+			previous = temp;
+			temp = temp.next;
+		}
+		throw new NoSuchElementException();
 	}
 
 	public void printList() {
@@ -168,6 +209,20 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 				break;
 			case 2:  // Remove element
 				it.remove();
+				lst.printList();
+				break;
+			case 3:	// Insert a new item x to the beginning of the list
+				int elemAdd = in.nextInt();
+				lst.addFirst(elemAdd);
+				lst.printList();
+				break;
+			case 4:  // Remove first element of the list
+				lst.removeFirst();
+				lst.printList();
+				break;
+			case 5:	// deletes and returns the first occurrence of x from the list
+				int elemDel = in.nextInt();
+				lst.remove(elemDel);
 				lst.printList();
 				break;
 			default:  // Exit loop
