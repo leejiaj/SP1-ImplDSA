@@ -1,5 +1,7 @@
 /** @author rbk
- *  Singly linked list: for use in Terrence Park's and Leejia James's SP1
+ *  @author Leejia James
+ *  Singly linked list: for use in Terrence Park's and Leejia James's SP1 team task
+ *  					for use in Leejia James's SP1 Optional tasks
  *  Ver 1.0: 2018/08/21
  *  Ver 2.0: 2018/08/28: modified to be able to extend to DoublyLinkedList
  *  Entry class has generic type associated with it, to allow inheritance.
@@ -14,6 +16,9 @@ this.prev = prev;
 }
 }
 
+ *  Ver 3.0: 2018/09/02: Added the methods addFirst(x), removeFirst(), remove(x).
+ *  Added indexing operations: get(index), set(index, x), add(index, x), remove(index).
+ *  Added separate options to test operations add(x) and unzip().
  */
 
 package lxj171130;
@@ -97,12 +102,14 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 		size++;
 	}
 	
-	protected void addFirst( T x) {
+	// Insert a new item x to the beginning of the list
+	public void addFirst( T x) {
 		Entry<T> temp = head.next;
 		head.next = new Entry<>(x,temp);
 		size++;
 	}
 	
+	// Remove first element of the list
 	public void removeFirst() {
 		if(head.next == null) {
 			throw new NoSuchElementException();
@@ -115,7 +122,8 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 		size--;
 	}
 	
-	public void remove(T x) {
+	// Delete and return the first occurrence of x from the list
+	public T remove(T x) {
 		if(head.next == null) {
 			throw new NoSuchElementException();
 		}
@@ -128,12 +136,60 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 				}
 				previous.next = temp.next;
 				size--;
-				return;
+				return temp.element;
 			}
 			previous = temp;
 			temp = temp.next;
 		}
 		throw new NoSuchElementException();
+	}
+	
+	// Return the previous element of the element at index
+	public Entry<T> getPrevious(int index){
+		if(size == 0)
+			throw new NoSuchElementException();
+		if(index >= size)
+			throw new IndexOutOfBoundsException();
+		Entry<T> temp = head.next;
+		Entry<T> previous = head;
+		int currentIndex = 0;
+		while(temp!=null) {
+			if(currentIndex == index) {
+				return previous;
+			}
+			previous = temp;
+			temp = temp.next;
+			currentIndex++;
+		}
+		return null;
+	}
+	
+	// Return the element at index
+	public T get(int index) {
+		return getPrevious(index).next.element;		
+	}
+	
+	// Replace the element at given index to be x
+	public void set(int index, T x) {
+		getPrevious(index).next.element = x;
+	}
+	
+	// Add x as a new element at given index
+	public void add(int index, T x) {
+		Entry<T> previous = getPrevious(index);
+		previous.next = new Entry<>(x, previous.next);
+		size++;
+	}
+	
+	// Delete and return element at index
+	public T removeElemAtIndex(int index) {
+		Entry<T> previous = getPrevious(index);
+		Entry<T> temp = previous.next;
+		if(temp.next == null)
+			tail = previous;
+		previous.next = temp.next;
+		size--;
+		return temp.element;
 	}
 
 	public void printList() {
@@ -184,6 +240,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 
 	public static void main(String[] args) throws NoSuchElementException {
 		int n = 10;
+		int index, x;
 		if(args.length > 0) {
 			n = Integer.parseInt(args[0]);
 		}
@@ -211,18 +268,49 @@ public class SinglyLinkedList<T> implements Iterable<T> {
 				it.remove();
 				lst.printList();
 				break;
-			case 3:	// Insert a new item x to the beginning of the list
+			case 3:  // Add new element to the end of list
+				int elemAddEnd = in.nextInt();
+				lst.add(elemAddEnd);
+				lst.printList();
+				break;
+			case 4:	// Unzip elements of the list
+				lst.unzip();
+				lst.printList();
+				break;
+			case 5:	// Insert a new item x to the beginning of the list
 				int elemAdd = in.nextInt();
 				lst.addFirst(elemAdd);
 				lst.printList();
 				break;
-			case 4:  // Remove first element of the list
+			case 6:  // Remove first element of the list
 				lst.removeFirst();
 				lst.printList();
 				break;
-			case 5:	// deletes and returns the first occurrence of x from the list
+			case 7:	// Delete and return the first occurrence of x from the list
 				int elemDel = in.nextInt();
-				lst.remove(elemDel);
+				System.out.println(lst.remove(elemDel));
+				lst.printList();
+				break;
+			case 8:	// Return the element at index
+				index = in.nextInt();
+				System.out.println(lst.get(index));
+				lst.printList();
+				break;
+			case 9:	// Replace the element at given index to be x
+				index = in.nextInt();
+				x = in.nextInt();
+				lst.set(index, x);
+				lst.printList();
+				break;
+			case 10:	// Add x as a new element at given index
+				index = in.nextInt();
+				x = in.nextInt();
+				lst.add(index, x);
+				lst.printList();
+				break;
+			case 11:	// Delete and return element at index
+				index = in.nextInt();
+				System.out.println(lst.removeElemAtIndex(index));
 				lst.printList();
 				break;
 			default:  // Exit loop
